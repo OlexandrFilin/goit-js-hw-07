@@ -17,7 +17,7 @@ function markupGalery(arr) {
     )
     .join("");
 }
-
+let instAb = 0;
 containerEl.insertAdjacentHTML("afterbegin", markupGalery(galleryItems));
 containerEl.addEventListener("click", onClickImg);
 function onClickImg(e) {
@@ -27,21 +27,27 @@ function onClickImg(e) {
   }
   const result = galleryItems.find(({ preview }) => preview === e.target.src);
   const instance = basicLightbox.create(
-    `
-   <img
+    `   <img
       src="${result.original}"
       alt="${result.description}"
-    />
-    `,
+    /> `,
     {
       onClose: (instance) => {
-        instance.close(); //Закриваємо лайтбокс
+        document.removeEventListener("keydown", onClickEscape, instance);
+        console.log("remove even listener keyboard");
+        return true;
       },
       onShow: (instance) => {
-        // тут також будце при відображенні лайтбоксу
+        instAb = instance;
+        document.addEventListener("keydown", onClickEscape, instance);
+        console.log("add even listener keyboard");
       },
     }
   );
   instance.show();
-  console.log(instance);
+}
+function onClickEscape(e) {
+  if (e.code === "Escape") {
+    instAb.close();
+  }
 }
